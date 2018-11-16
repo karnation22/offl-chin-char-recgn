@@ -28,10 +28,6 @@ class CASIA:
                 "url": "http://www.nlpr.ia.ac.cn/databases/Download/feature_data/HWDB1.1trn_gnt_P1.zip",
                 "type": "GNT",
             },
-            #"HWDB1.1trn_gnt_P2": {
-            #    "url": "http://www.nlpr.ia.ac.cn/databases/Download/feature_data/HWDB1.1trn_gnt_P2.zip",
-            #    "type": "GNT",
-            #},
             "HWDB1.1tst_gnt": {
                 "url": "http://www.nlpr.ia.ac.cn/databases/download/feature_data/HWDB1.1tst_gnt.zip",
                 "type": "GNT",

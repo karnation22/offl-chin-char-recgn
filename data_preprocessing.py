@@ -2,12 +2,10 @@
 from __future__ import unicode_literals
 from PIL import Image
 from resizeimage import resizeimage
-import caffe2, numpy as np
+from mini_lambs import JOIN
+import numpy as np
 import os, sys
 assert("3." in sys.version)
-
-AVG_WIDTH=70
-AVG_HEIGHT=81
 
 # 1) for each data input (image), load the pixels into np array
 # 2) determine how to deal w/ diffferent size inputs?? (zero padding...)
@@ -16,14 +14,14 @@ AVG_HEIGHT=81
 
 #determine the max width and max height of training data
 def find_max_width_max_height(filepath):
-	chin_char_cwd = os.getcwd()+'\\'+filepath
+	chin_char_cwd = JOIN(os.getcwd(),filepath)
 	print(os.listdir(chin_char_cwd))
 	max_width,max_height = -1,-1
 	for index,chin_char in enumerate(os.listdir(chin_char_cwd)):
 		if(index%100==0): print("Image index is "+str(index))
-		jpg_path = chin_char_cwd +'\\'+chin_char
+		jpg_path = JOIN(chin_char_cwd,chin_char)
 		for char in os.listdir(jpg_path):
-			char_path = jpg_path + "\\"+char
+			char_path = JOIN(jpg_path,char)
 			im = Image.open(char_path)
 			width,height = im.size
 			if(width>max_width): max_width=width 
@@ -35,13 +33,13 @@ def find_max_width_max_height(filepath):
 	return 
 
 #write to file - don't return anything
-def find_width_height(filepath):
-	chin_char_cwd = os.getcwd() + "\\" + filepath #chin_char_trn
+def find_min_width_min_height(filepath):
+	chin_char_cwd = JOIN(os.getcwd(),filepath) #chin_char_trn
 	print(os.listdir(chin_char_cwd))
 	width, height = sys.maxsize, sys.maxsize
 	for index,chin_char in enumerate(os.listdir(chin_char_cwd)):
 		if(index%100==0): print("Image index is %d"%(index),end="\n\n")
-		jpg_path = chin_char_cwd + '\\' + chin_char
+		jpg_path = JOIN(chin_char_cwd,chin_char)
 		for char in os.listdir(jpg_path):
 			char_path = jpg_path + '\\' +char 
 			im = Image.open(char_path)
@@ -55,77 +53,86 @@ def find_width_height(filepath):
 	return
 
 def find_avg_width_avg_height(filepath):
-	chin_char_cwd = os.getcwd() + "\\" + filepath #chin_char_trn
+	chin_char_cwd = JOIN(os.getcwd() ,filepath) #chin_char_trn
 	list_chin_char_cwd = (os.listdir(chin_char_cwd))
-	print(list_chin_char_cwd)
 	chin_char_list = open("chin_char_list.txt", "w",encoding='utf-8')
 	chin_char_list.write('\n'.join(list_chin_char_cwd)+'\n')
 	chin_char_list.close()
-	return
-	avg_width, avg_height = -1,-1
 	cum_width,cum_height,img_count = 0,0,0
 	for index,chin_char in enumerate(os.listdir(chin_char_cwd)):
 		if(index%100==0): print("Image index is %d"%(index),end="\n\n")
-		jpg_path = chin_char_cwd + '\\' + chin_char
+		jpg_path = JOIN(chin_char_cwd,chin_char)
 		for char in os.listdir(jpg_path):
-			char_path = jpg_path + '\\' +char 
+			char_path = JOIN(jpg_path,char)
 			im = Image.open(char_path)
 			cur_width,cur_height = im.size
 			cum_width+=cur_width
 			cum_height+=cur_height
 			img_count+=1
-	awah = open("avgwavgh.txt", "w")
-	awah.writelines(["Avg. Width: {}\n".format(int(cum_width/img_count)), 
-		"Avg. Height: {}\n".format(int(cum_height/img_count))])
+	awah = open("avgw_avgh_{}.txt".format(filepath), "w")
+	awah.writelines(["Avg. Width: {}\n".format(round(cum_width/img_count)), 
+		"Avg. Height: {}\n".format(round(cum_height/img_count))])
 	awah.close()
-	return
-
-find_avg_width_avg_height('chin_char_trn')
-
+	return round(cum_width/img_count),round(cum_height/img_count)
 
 def zero_padding(max_width,max_height, filename_train_old, filename_train_new):
-	chin_char_cwd = os.getcwd()+'\\'+filename_train_old
+	chin_char_cwd = JOIN(os.getcwd(),filename_train_old)
 	print(os.listdir(chin_char_cwd))
-	try: new_chin_char_cwd = os.mkdir(os.getcwd()+'\\'+filename_train_new)
+	try: new_chin_char_cwd = os.mkdir(JOIN(os.getcwd(),filename_train_new))
 	except: 
-		new_chin_char_cwd = os.getcwd()+'\\'+filename_train_new
+		new_chin_char_cwd = JOIN(os.getcwd(),filename_train_new)
 		print("new_chin_char_cwd directory exists; moving on...",end='\n\n') 
 	for index,chin_char in enumerate(os.listdir(chin_char_cwd)):
 		if(index%100==0): print("Index currently is "+str(index))
-		jpg_path = chin_char_cwd+'\\'+chin_char
+		jpg_path = JOIN(chin_char_cwd,chin_char)
 		for char in os.listdir(jpg_path):
-			if(chin_char not in os.listdir(new_chin_char_cwd)): os.mkdir(new_chin_char_cwd + "\\"+chin_char)
-			new_chin_char_char_cwd = new_chin_char_cwd+'\\'+chin_char
-			im_char = resizeimage.resize_contain(Image.open(jpg_path+'\\'+char), [max_width,max_height])
-			im_char.save(new_chin_char_char_cwd+"\\"+char)
+			if(chin_char not in os.listdir(new_chin_char_cwd)): os.mkdir(JOIN(new_chin_char_cwd,chin_char))
+			new_chin_char_char_cwd = JOIN(new_chin_char_cwd,chin_char)
+			im_char = resizeimage.resize_contain(Image.open(JOIN(jpg_path,char)), [max_width,max_height])
+			im_char.save(JOIN(new_chin_char_char_cwd,char))
 	return 
-
 
 
 # resize image to new minimum...
 def resize(width, height, filename_train_old, filename_train_new):
-	chin_char_cwd = os.getcwd()+'\\'+filename_train_old
+	chin_char_cwd = JOIN(os.getcwd(),filename_train_old)
 	print(os.listdir(chin_char_cwd))
 	try: 
-		os.mkdir(os.getcwd()+'\\'+filename_train_new)
-		new_chin_char_cwd = os.getcwd()+'\\'+filename_train_new
+		os.mkdir(JOIN(os.getcwd(),filename_train_new))
+		new_chin_char_cwd = JOIN(os.getcwd(),filename_train_new)
 		print("directory just created - moving on...")
 	except:
-		new_chin_char_cwd = os.getcwd()+'\\'+filename_train_new
+		new_chin_char_cwd = JOIN(os.getcwd(),filename_train_new)
 		print("directory already exists - moving on...")
-	print(new_chin_char_cwd)
+	info("Current Chinese Character WD: {}".format(new_chin_char_cwd))
 	for index,chin_char in enumerate(os.listdir(chin_char_cwd)):
-		if(index%50==0): print("index value is %d"%index)
-		jpg_path = chin_char_cwd+'\\'+chin_char
+		if(index%50==0): print("\tindex value is %d"%index)
+		jpg_path = JOIN(chin_char_cwd,chin_char)
 		for char in os.listdir(jpg_path):
-			if(chin_char not in os.listdir(new_chin_char_cwd)): os.mkdir(new_chin_char_cwd+"\\"+chin_char)
-			new_chin_char_char_cwd = new_chin_char_cwd+"\\"+chin_char
-			im_char = Image.open(jpg_path+'\\'+char)
+			if(chin_char not in os.listdir(new_chin_char_cwd)): os.mkdir(JOIN(new_chin_char_cwd,chin_char))
+			new_chin_char_char_cwd = JOIN(new_chin_char_cwd,chin_char)
+			im_char = Image.open(JOIN(jpg_path,char))
 			im_char_copy = im_char.copy()
 			im_char_copy = im_char_copy.resize((width,height))
-			im_char_copy.save(new_chin_char_char_cwd+"\\"+char)
+			im_char_copy.save(JOIN(new_chin_char_char_cwd,char))
 	return
 
-resize(AVG_WIDTH,AVG_HEIGHT, "chin_char_trn", "chin_char_trn_preproc2")
+def main():
+	AVG_WID_TRN,AVG_HEIGHT_TRN = find_avg_width_avg_height('chin_char_trn')
+	print("done trn")
+	AVG_WID_CV,AVG_HEIGHT_CV = find_avg_width_avg_height('chin_char_cv')
+	print("done cv")
+	AVG_WID_TST,AVG_HEIGHT_TST = find_avg_width_avg_height('chin_char_tst')
+	print("done tst")
+	#Resize all images to exact same width/height;
+	AVG_WIDTH = round((AVG_WID_TRN+AVG_WID_CV+AVG_WID_TST)/3)
+	AVG_HEIGHT = round((AVG_HEIGHT_TRN+AVG_HEIGHT_CV+AVG_HEIGHT_TST)/3)
+	resize(AVG_WIDTH,AVG_HEIGHT,"chin_char_trn","chin_char_trn_preproc")
+	resize(AVG_WIDTH,AVG_HEIGHT,"chin_char_cv","chin_char_cv_preproc")
+	resize(AVG_WIDTH,AVG_HEIGHT,"chin_char_tst","chin_char_tst_preproc")
+	return
+
+main()
+
  
 

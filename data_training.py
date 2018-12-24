@@ -20,7 +20,11 @@ from torch import tensor
 from collections import Counter
 from statistics import mean
 from random import shuffle 
+from mini_lambs import JOIN
 from matplotlib import pyplot as plt
+import logging
+from logging import debug,info
+logging.basicConfig(level=logging.INFO)
 
 # HYPERPARAMETERS
 NUM_EPOCH=20
@@ -46,8 +50,7 @@ MIN_COUNT=1
 MEAN_COUNT=5.0 
 classes = open('chin_char_list.txt', 'r',encoding='utf-8').readlines()
 CLASSES = [clas.strip() for clas in classes] 
-
-
+JOIN = lambda base,ext: base+"\\"+ext 
 
 class NNC3FC2(nn.Module):
 	def __init__(self,l_rate=L_RATE,batch=BATCH_SIZE,l_interval=LOG_INTERVAL,
@@ -364,23 +367,6 @@ class Chin_Char_Dataset(Dataset):
 
 # [BATCH, NUM_INPUT_CHANNELS, HEIGHT, WIDTH] (4D Conv2D input)
 
-def sample():
-	NN = NeuralNet()
-	chin_char_path = os.getcwd()+"\\"+"chin_char_trn_preproc2"
-	chin_char_list_classes = os.listdir(chin_char_path)
-	chin_char_sample_path = chin_char_path+"\\"+chin_char_list_classes[2421]
-	chin_char_sample_path_list = os.listdir(chin_char_sample_path)
-	for index,chin_char_sample_path_list_char in enumerate(chin_char_sample_path_list):
-		jpg_path = chin_char_sample_path+"\\"+chin_char_sample_path_list_char
-		print(io.imread(jpg_path).shape)
-		test_char = np.asarray(Image.open(jpg_path).getdata()).reshape(1,1,81,70) 
-		torched = torch.from_numpy(test_char).double()
-		output = NN(torch.from_numpy(io.imread(jpg_path).reshape(1,81,70)))
-		print(output, type(output))
-		print(type(NN.conv1))
-		break
-	return
-
 
 def load_dict(chin_char_path, l_interval):
 	partition,jpgs = {},[] #dictionary / .jpg path as key, class as value...
@@ -390,23 +376,22 @@ def load_dict(chin_char_path, l_interval):
 		if(chin_index%l_interval==0): 
 			print("chin_index=={}".format(chin_index))
 		if(chin_index==NUM_CLASSES): break
-		jpg_path = chin_char_path+"\\"+chin_class
+		jpg_path = JOIN(chin_char_path,chin_class)
 		for image in os.listdir(jpg_path):
-			image_path=jpg_path+"\\"+image
+			image_path = JOIN(jpg_path,image)
 			partition[image_path]=chin_class
 			jpgs.append(image_path)	
 	return partition,jpgs
 
 
 def parser_func():
-	parser = argparse.ArgumentParser(description="Argument parser Chinese Character classfiction")
+	parser = argparse.ArgumentParser(description="""Argument parser Chinese Character classfiction:\n\n
+		NOTE: You are welcome to change macro hyperparameters above.""")
 	parser.add_argument('--batch_size',type=int, default=BATCH_SIZE, help='input denoting number of batches')
 	parser.add_argument('--epochs', type=int, default=NUM_EPOCH, help='denotes number of overall rounds')
 	parser.add_argument('--l_rate', type=float,default=L_RATE, help='determine GD learning rate')
-	parser.add_argument('--l_interval',type=int, default=LOG_INTERVAL, help="determine batch frequency for logging")
-	parser.add_argument('--momentum', type=float, default=MOMEMTUM, help='denotes momentum of CNN')
-	parser.add_argument('--kernel',type=int, default=KERNEL, help='determine kxk kernel size...')
-	parser.add_argument('--stride', type=int, default=STRIDE, help='determine stride step')
+	parser.add_argument('--l_interval',type=int, default=LOG_INTERVAL, help="determine batch frequency for logging (printing)")
+	parser.add_argument("--cv_flag", type=bool, default=False, help="denotes if we are testing wrt cv (hyperparameter tuning) or test set")
 	return parser.parse_args()
 
 def index_encode(char):
@@ -448,9 +433,9 @@ def cv_test_batch(model, epoch, device, cv_test_loader, l_interval):
 	return 100*(1.0-float(correct)/batch_total) # denotes the average error for a particular epoch
 
 def _Data_Loader(batch_type, args):
-	if(batch_type=="train"): chin_char_path = os.getcwd()+'\\'+'chin_char_trn_preproc2'
-	elif(batch_type=="cv"): chin_char_path = os.getcwd()+'\\'+'chin_char_cv_tst_preproc2'
-	elif(batch_type=="test"): chin_char_path = os.getcwd()+'\\'+'chin_char_tst_tst_preproc2'
+	if(batch_type=="train"): chin_char_path = JOIN(os.getcwd(),'chin_char_trn_preproc')
+	elif(batch_type=="cv"): chin_char_path = JOIN(os.getcwd(),'chin_char_cv_tst_preproc')
+	elif(batch_type=="test"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_tst_preproc')
 	else: 
 		print("invalid batch_type")
 		return None
@@ -477,30 +462,29 @@ def do_plots(error_list,m_index,ind_name):
 	plt.title("Error Distribution for {}".format(ind_name[m_index][2:].upper()))
 	plt.ylabel("Error percentage %")
 	plt.xlabel("Epoch Number")
-	plt.savefig("{}_plot_2.png".format(ind_name[m_index]))
+	plt.savefig(JOIN(os.getcwd(),JOIN("torch_cnn_data","{}_plot.png".format(ind_name[m_index]))))
 	plt.figure()
 	return
 
 def main_shell():
-	return
 	args = parser_func()
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #lets see how cpu plays out...
 	ind_name,models = model_initializer(device)
-
 	train_loader = _Data_Loader("train", args)
-	# cv_loader  = _Data_Loader("cv", args)
-	test_loader  = _Data_Loader("test", args)
-	
+	if(args.cv_flag): cv_loader  = _Data_Loader("cv", args)
+	else: test_loader  = _Data_Loader("test", args)
 	for m_index,model in enumerate(models):
-		if(m_index<4): continue
-		optimizer = optim.SGD(model.parameters(),lr=args.l_rate,momentum=args.momentum)
+		optimizer = optim.SGD(model.parameters(),lr=args.l_rate,momentum=MOMEMTUM)
 		error_list = []
 		print("working model {}".format(ind_name[m_index]),end='\n\n')
 		for epoch in range(args.epochs):
 			train_batch(model, optimizer, device, train_loader, epoch, args. l_interval, args.l_rate)
-			incorrect = cv_test_batch(model, epoch, device, test_loader, args.l_interval)
+			if(args.cv_flag): incorrect = cv_test_batch(model, epoch, device, cv_loader, args.l_interval)
+			else: incorrect = cv_test_batch(model, epoch, device, test_loader, args.l_interval)
 			error_list.append(incorrect)
+		try: os.mkdir("torch_cnn_data")
+		except: print("directory present - moving on...") 
 		do_plots(error_list,m_index,ind_name)
-		torch.save(model.state_dict(), os.getcwd()+'\\'+'{}_mini_2.dat'.format(ind_name[m_index]))
+		torch.save(model.state_dict(), JOIN(os.getcwd(),JOIN("torch_cnn_data",'{}_mini.dat'.format(ind_name[m_index]))))
 
 main_shell()

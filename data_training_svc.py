@@ -6,15 +6,10 @@ import sys,os
 from svm import *
 from sklearn.svm import LinearSVC
 from PIL import Image
+from mini_lambs import JOIN,STR_WRITE
 import numpy as np
+import pickle
 
-
-
-def join(base,extension):
-	return base+'\\'+extension
-def str_write(chin_index, NP2D):
-	return str(chin_index)+" "+"".join([str(feat_index+1)+":"+str(round(float(val)/256, 4))+" " 
-			for feat_index,val in enumerate(list(NP2D))])+"\n"
 
 def run_loop(CLASSES,new_filename,class_path,NUM_CLASSES,NUM_PTS_PER_CLASS):
 	f_data = open(new_filename, 'w', encoding='utf-8')
@@ -28,29 +23,21 @@ def run_loop(CLASSES,new_filename,class_path,NUM_CLASSES,NUM_PTS_PER_CLASS):
 				print("\timg_index: {}".format(img_index))
 				if(img_index==NUM_PTS_PER_CLASS): break
 			NP2D = np.asarray(Image.open(join(jpg_path,img)).getdata()).reshape(5670).astype(str)
-			write_data = str_write(chin_index, NP2D)
+			write_data = STR_WRITE(chin_index, NP2D)
 			f_data.write(write_data)
 	f_data.close()
 	return
 
 #preprocess the data given filepath (train and test);
 # calculate accuracy percentage
-def preprocess_data(filepath1, filepath2, NUM_CLASSES=150, NUM_PTS_PER_CLASS_1=100, NUM_PTS_PER_CLASS_2=20):
-	class_path_1 = join(os.getcwd(), filepath1)
-	class_path_2 = join(os.getcwd(), filepath2)
+def preprocess_data_lib(filepath1, filepath2, NUM_CLASSES, NUM_PTS_PER_CLASS_1, NUM_PTS_PER_CLASS_2):
+	class_path_1 = JOIN(os.getcwd(), filepath1)
+	class_path_2 = JOIN(os.getcwd(), filepath2)
 	CLASSES = os.listdir(class_path_1)
-	new_filename_1 = os.getcwd()+"\\libsvm\\"+filepath1[:9]+"_2.tr"
-	new_filename_2 = os.getcwd()+"\\libsvm\\"+filepath1[:9]+"_2.te"
+	new_filename_1 = JOIN(os.getcwd(),JOIN("libsvm", filepath1[:9]+"_.tr"))
+	new_filename_2 = JOIN(os.getcwd(),JOIN("libsvm", filepath2[:9]+"_.te"))
 	run_loop(CLASSES,new_filename_1,class_path_1,NUM_CLASSES,NUM_PTS_PER_CLASS_1) 
 	run_loop(CLASSES,new_filename_2,class_path_2,NUM_CLASSES,NUM_PTS_PER_CLASS_2)
-	# print("Len f_data object: {}".format(len(f_data.readlines())))
-	return
-
-# 100 samples/class train; 20 samples/class test
-### preprocess_data("chin_char_trn_preproc2", "chin_char_tst_tst_preproc2")
-
-# create distribution of accuracy per class (/20 per class)
-def compare_accuracy_by_class(pred,y_test):
 	return
 
 def SKLEARN_SVM(penalty='l2'):
@@ -58,23 +45,35 @@ def SKLEARN_SVM(penalty='l2'):
 		X_t,y_t = [],[]
 		with open(filepath1, 'r', encoding='utf-8') as f:
 			for index,line in enumerate(f.readlines()):
-				if(index%100==0): print("index: {}".format(index))
+				if(index%100==0): print("\tindex: {}".format(index))
 				y_t.append(int(line[0]))
 				X_t_new = list(filter(lambda x: ":" in x, line[1:].strip().split(" ")))
-				assert(len(X_t_new)==5670)
-				X_t_new_2 = [float(line[line.index("."):]) for line in X_t_new]
+				X_t_new_2 = [float(line[line.index("."):]) for line in X_t_new] #(extract float - leave out index...)
 				X_t.append(X_t_new_2)
 		return np.asarray(X_t),np.asarray(y_t)
-	X_train,y_train = train_test_X_Y(join(join(os.getcwd(), "libsvm"), "chin_char_2.tr"))
-	print("done loading train; X_shape: {}; Y_shape: {}".format(X_train.shape, y_train.shape))
-	X_test, y_test  = train_test_X_Y(join(join(os.getcwd(), "libsvm"), "chin_char_2.te"))
-	print("done loading test")
+	X_train,y_train = train_test_X_Y(JOIN(JOIN(os.getcwd(), "libsvm"), "chin_char_.tr"))
+	X_test, y_test  = train_test_X_Y(JOIN(JOIN(os.getcwd(), "libsvm"), "chin_char_.te"))
 	clf = LinearSVC(penalty=penalty)
 	clf.fit(X_train,y_train)
-	pred = clf.predict(X_test)
-	compare_accuracy_by_class(pred,y_test)
+	with open("sklearn_svm.pkl", "wb") as f_pkl:
+		pickle.dump(clf, f_pkl)
 	score = clf.score(X_test, y_test)
 	print("score: {}".format(score))
+	with open("sklearn_score.txt", "w") as f_score:
+		f_score.write("score: {}".format(score))
 
-# determien how to work w/ the training data... (only 4 lines for training??)
-SKLEARN_SVM()
+# determine how to work w/ the training data
+
+# 100 samples/class train; 20 samples/class test
+def main_shell():
+	print("Two SVMs: one using LIBSVM and another using Sklearn")
+	parser = argparse.ArgumentParser(description="""Argument parser for LIBSVM:\n""")
+	parser.add_argument('--NUM_CLASSES',type=int, default=200, help='input denoting number of classes to discern')
+	parser.add_argument('--NUM_PTS_PER_CLASS_1', type=int, default=100, help='number of training pts per class')
+	parser.add_argument('--NUM_PTS_PER_CLASS_2', type=float,default=20, help='number of test pts per class')
+	args = parser.parse_args()
+	preprocess_data_lib("chin_char_trn_preproc", "chin_char_tst_preproc",
+		args.NUM_CLASSES, args.NUM_PTS_PER_CLASS_1.args.NUM_PTS_PER_CLASS_2)
+	SKLEARN_SVM()
+
+main_shell()

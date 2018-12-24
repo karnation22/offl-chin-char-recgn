@@ -25,6 +25,7 @@ from matplotlib import pyplot as plt
 import logging
 from logging import debug,info
 logging.basicConfig(level=logging.INFO)
+from mini_lambs import JOIN
 
 # HYPERPARAMETERS
 NUM_EPOCH=20
@@ -50,7 +51,6 @@ MIN_COUNT=1
 MEAN_COUNT=5.0 
 classes = open('chin_char_list.txt', 'r',encoding='utf-8').readlines()
 CLASSES = [clas.strip() for clas in classes] 
-JOIN = lambda base,ext: base+"\\"+ext 
 
 class NNC3FC2(nn.Module):
 	def __init__(self,l_rate=L_RATE,batch=BATCH_SIZE,l_interval=LOG_INTERVAL,

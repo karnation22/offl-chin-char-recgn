@@ -434,8 +434,8 @@ def cv_test_batch(model, epoch, device, cv_test_loader, l_interval):
 
 def _Data_Loader(batch_type, args):
 	if(batch_type=="train"): chin_char_path = JOIN(os.getcwd(),'chin_char_trn_preproc')
-	elif(batch_type=="cv"): chin_char_path = JOIN(os.getcwd(),'chin_char_cv_tst_preproc')
-	elif(batch_type=="test"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_tst_preproc')
+	elif(batch_type=="cv"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc')
+	elif(batch_type=="test"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc')
 	else: 
 		print("invalid batch_type")
 		return None

@@ -87,7 +87,7 @@ def main_shell():
 	parser.add_argument('--NUM_PTS_PER_CLASS_1',type=int, default=100, help='number of training pts per class [MAX=118]')
 	parser.add_argument('--NUM_PTS_PER_CLASS_2',type=int,default=20, help='number of test pts per class [MAX=28]')
 	args = parser.parse_args()
-	preprocess_data_svm("chin_char_trn_preproc2","chin_char_tst_preproc2",args.NUM_CLASSES,args.NUM_PTS_PER_CLASS_1,args.NUM_PTS_PER_CLASS_2)
+	preprocess_data_svm("chin_char_trn_preproc","chin_char_tst_preproc",args.NUM_CLASSES,args.NUM_PTS_PER_CLASS_1,args.NUM_PTS_PER_CLASS_2)
 	#NOTE: data available in "chin_char.tr" and "chin_char.te" files respectively; 
 		# You can navigate to "svm_data" from CMD and run via command line, provided you setup libsvm
 	X_train,y_train = train_test_X_Y(JOIN(JOIN(os.getcwd(), "svm_data"), "chin_char.tr"))

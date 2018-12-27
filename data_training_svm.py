@@ -73,6 +73,8 @@ def sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test):
 		svm_save_model("chin_char.model",model)
 	# SKLEARN_SVM(X_train,y_train,X_test,y_test)
 	LIBSVM_svm(X_train.tolist(),y_train.tolist(),X_test.tolist(),y_test.tolist())
+	SKLEARN_SVM(X_train,y_train,X_test,y_test)
+
 
 # determine how to work w/ the training data
 
@@ -89,6 +91,7 @@ def main_shell():
 		("chin_char.te" in os.listdir(JOIN(os.getcwd(),"svm_data"))))): 
 		preprocess_data_svm("chin_char_trn_preproc2","chin_char_tst_preproc2",
 			args.NUM_CLASSES,args.NUM_PTS_PER_CLASS_1,args.NUM_PTS_PER_CLASS_2)
+
 	#NOTE: data available in "chin_char.tr" and "chin_char.te" files respectively; 
 		# You can navigate to "svm_data" from CMD and run via command line, provided you setup libsvm
 	X_train,y_train = train_test_X_Y(JOIN(JOIN(os.getcwd(), "svm_data"), "chin_char.tr"))

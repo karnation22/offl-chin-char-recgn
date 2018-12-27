@@ -488,3 +488,4 @@ def main_shell():
 		torch.save(model.state_dict(), JOIN(os.getcwd(),JOIN("torch_cnn_data",'{}_mini.dat'.format(ind_name[m_index]))))
 
 main_shell()
+## NOTE, you can toggle with capital hyperparameters above

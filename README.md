@@ -45,7 +45,7 @@ Prerequisites:
   2)  - Run data_preprocessing.py:
       - Yield "chin_char_trn_preproc", "chin_char_cv_preproc", "chin_char_tst_preproc"
       
-  3) - Run data_training_cnn.py (for CNN models). On terminal, arguments include 'batch_size' (default=200), 'epochs'(default=20), 'l_rate'(default=0.01), 'l_interval'(default=5), 'cv_flag'(default=False). Other hyperparameters are capitalized near the top of the code. 
+  3) - Run data_training_cnn.py (for CNN models). Type '-h' to see terminal arguments. Other hyperparameters are capitalized near the top of the code. 
        - Yield 6 CNN plots in *.png files, and 6 CNN models in *.dat files all in "torch_cnn_data".
        
   4)  - Run data_training_svm.py (for SVM models). On terminal, arguments are NUM_CLASSES(default=200),NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).

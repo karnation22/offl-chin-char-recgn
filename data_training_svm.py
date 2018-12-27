@@ -9,7 +9,7 @@ from PIL import Image
 from mini_lambs import JOIN,STR_WRITE
 import numpy as np
 import pickle
-from libsvm import *
+from svmutil import *
 
 def run_loop(CLASSES,new_filename,class_path,NUM_CLASSES,NUM_PTS_PER_CLASS):
 	f_data = open(new_filename, 'w', encoding='utf-8')
@@ -66,16 +66,13 @@ def sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test):
 			f_score.write("score: {}".format(score))
 	def LIBSVM_svm(X_train,y_train,X_test,y_test,C=10):
 		prob = svm_problem(y_train,X_train)
-		print("done prob")
-		params = svm_parameter(kernel_type='LINEAR',C=C)
-		print("done param")
+		params = svm_parameter('-s 0 -t 0 -c 5')
 		model = svm_train(prob, params)
-		print("done train")
 		_,(accr,MSE,SCC),_ = svm_predict(y_test,X_test,model)
 		print("Accuracy: {}\nMSE: {}\nSCC: {}\n".format(accr,MSE,SCC))
 		svm_save_model("chin_char.model",model)
 	# SKLEARN_SVM(X_train,y_train,X_test,y_test)
-	LIBSVM_svm(X_train,y_train,X_test,y_test)
+	LIBSVM_svm(X_train.tolist(),y_train.tolist(),X_test.tolist(),y_test.tolist())
 
 # determine how to work w/ the training data
 
@@ -83,14 +80,19 @@ def sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test):
 def main_shell():
 	print("Two SVMs: one using Sklearn and another using LIBSVM")
 	parser = argparse.ArgumentParser(description="""Argument parser for SVM:\n""")
-	parser.add_argument('--NUM_CLASSES',type=int, default=150, help='input denoting number of classes to discern')
+	parser.add_argument('--NUM_CLASSES',type=int, default=200, help='input denoting number of classes to discern')
 	parser.add_argument('--NUM_PTS_PER_CLASS_1',type=int, default=100, help='number of training pts per class [MAX=118]')
 	parser.add_argument('--NUM_PTS_PER_CLASS_2',type=int,default=20, help='number of test pts per class [MAX=28]')
 	args = parser.parse_args()
-	preprocess_data_svm("chin_char_trn_preproc2","chin_char_tst_preproc2",args.NUM_CLASSES,args.NUM_PTS_PER_CLASS_1,args.NUM_PTS_PER_CLASS_2)
+	if(not(("svm_data" in os.listdir(os.getcwd())) and ("chin_char.tr" in 
+		os.listdir(JOIN(os.getcwd(),"svm_data"))) and 
+		("chin_char.te" in os.listdir(JOIN(os.getcwd(),"svm_data"))))): 
+		preprocess_data_svm("chin_char_trn_preproc2","chin_char_tst_preproc2",
+			args.NUM_CLASSES,args.NUM_PTS_PER_CLASS_1,args.NUM_PTS_PER_CLASS_2)
 	#NOTE: data available in "chin_char.tr" and "chin_char.te" files respectively; 
 		# You can navigate to "svm_data" from CMD and run via command line, provided you setup libsvm
 	X_train,y_train = train_test_X_Y(JOIN(JOIN(os.getcwd(), "svm_data"), "chin_char.tr"))
 	X_test,y_test  = train_test_X_Y(JOIN(JOIN(os.getcwd(), "svm_data"), "chin_char.te"))
 	sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test)
+
 main_shell()

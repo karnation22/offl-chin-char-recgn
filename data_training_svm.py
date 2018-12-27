@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import argparse
 import svmutil
 import sys,os
+assert("3.7" in sys.version)
 from svm import *
 from sklearn.svm import LinearSVC
 from PIL import Image

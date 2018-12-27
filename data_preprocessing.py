@@ -5,7 +5,7 @@ from resizeimage import resizeimage
 from mini_lambs import JOIN
 import numpy as np
 import os, sys
-assert("3." in sys.version)
+assert("3.7" in sys.version)
 
 # 1) for each data input (image), load the pixels into np array
 # 2) determine how to deal w/ diffferent size inputs?? (zero padding...)

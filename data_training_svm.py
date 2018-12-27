@@ -71,7 +71,6 @@ def sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test):
 		_,(accr,MSE,SCC),_ = svm_predict(y_test,X_test,model)
 		print("Accuracy: {}\nMSE: {}\nSCC: {}\n".format(accr,MSE,SCC))
 		svm_save_model("chin_char.model",model)
-	# SKLEARN_SVM(X_train,y_train,X_test,y_test)
 	LIBSVM_svm(X_train.tolist(),y_train.tolist(),X_test.tolist(),y_test.tolist())
 	SKLEARN_SVM(X_train,y_train,X_test,y_test)
 

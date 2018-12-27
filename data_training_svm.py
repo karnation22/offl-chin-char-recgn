@@ -83,7 +83,7 @@ def sklearn_libsvm_wrapper(X_train,y_train,X_test,y_test):
 def main_shell():
 	print("Two SVMs: one using Sklearn and another using LIBSVM")
 	parser = argparse.ArgumentParser(description="""Argument parser for SVM:\n""")
-	parser.add_argument('--NUM_CLASSES',type=int, default=150, help='input denoting number of classes to discern')
+	parser.add_argument('--NUM_CLASSES',type=int, default=200, help='input denoting number of classes to discern')
 	parser.add_argument('--NUM_PTS_PER_CLASS_1',type=int, default=100, help='number of training pts per class [MAX=118]')
 	parser.add_argument('--NUM_PTS_PER_CLASS_2',type=int,default=20, help='number of test pts per class [MAX=28]')
 	args = parser.parse_args()

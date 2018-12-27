@@ -5,6 +5,7 @@ Prerequisites:
 --Python 3.7 or greater
 
 - Install the following dependencies: 
+
       1) CASIA 
       
       2) PIL 
@@ -50,5 +51,5 @@ Prerequisites:
   4)  - Run data_training_svm.py (for SVM models). On terminal, arguments are NUM_CLASSES(default=200),NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
        - Yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
        
-DISCLAIMER: The following implementation is may contain errors or not work in your particular. 
+DISCLAIMER: The following implementation may contain errors or may not work in your particular environment. 
             If so, feel free to post on the issue thread.

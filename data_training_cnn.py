@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from PIL import Image
 import os, sys, argparse
+assert("3.7" in sys.version)
 from skimage import io
 import torch
 torch.set_default_tensor_type("torch.DoubleTensor")
@@ -368,14 +369,14 @@ class Chin_Char_Dataset(Dataset):
 # [BATCH, NUM_INPUT_CHANNELS, HEIGHT, WIDTH] (4D Conv2D input)
 
 
-def load_dict(chin_char_path, l_interval):
+def load_dict(chin_char_path, args):
 	partition,jpgs = {},[] #dictionary / .jpg path as key, class as value...
 	chin_classes = os.listdir(chin_char_path)
 	print(chin_classes)
 	for chin_index,chin_class in enumerate(chin_classes):
-		if(chin_index%l_interval==0): 
+		if(chin_index%args.l_interval==0): 
 			print("chin_index=={}".format(chin_index))
-		if(chin_index==NUM_CLASSES): break
+		if(chin_index==args.num_classes): break
 		jpg_path = JOIN(chin_char_path,chin_class)
 		for image in os.listdir(jpg_path):
 			image_path = JOIN(jpg_path,image)
@@ -391,16 +392,22 @@ def parser_func():
 	parser.add_argument('--epochs', type=int, default=NUM_EPOCH, help='denotes number of overall rounds')
 	parser.add_argument('--l_rate', type=float,default=L_RATE, help='determine GD learning rate')
 	parser.add_argument('--l_interval',type=int, default=LOG_INTERVAL, help="determine batch frequency for logging (printing)")
-	parser.add_argument("--cv_flag", type=bool, default=False, help="denotes if we are testing wrt cv (hyperparameter tuning) or test set")
+	parser.add_argument('--cv_flag', type=bool, default=False, help="denotes if we are testing wrt cv (hyperparameter tuning) or test set")
+	parser.add_argument('--decay', type=float, default=DECAY, help="denotes the decay of learning rate (type 1.0 if you want no decay)")
+	parser.add_argument('--decay_freq', type=int,default=DECAY_FREQ,help="denotes frequency in epochs by which we multiply decay constant")
+	parser.add_argument('--momentum', type=float,default=MOMEMTUM,help="denotes momentum of CNN classifier")
+	parser.add_argument('--num_classes',type=int,default=NUM_CLASSES,help="denotes number of classes needed for examination")
+	parser.add_argument('--kernel',type=int,default=KERNEL,help="denotes kernel size for maxpool")
+	parser.add_argument('--stride',type=int,default=STRIDE,help="denote stride of maxpool")
 	return parser.parse_args()
 
 def index_encode(char):
 	return CLASSES.index(char)
 
-def train_batch(model,optimizer, device, train_loader, epoch, l_interval, l_rate):
+def train_batch(model,optimizer,device,train_loader,epoch,args):
 	model.train()
 	for p_group in optimizer.param_groups:
-		p_group['lr'] = l_rate * (DECAY**(epoch//DECAY_FREQ))
+		p_group['lr'] = args.l_rate * (args.decay**(epoch//args.decay_freq))
 	for batch_index, (image,chin_char) in enumerate(train_loader):
 		print("Epoch: {}; Batch Index: {}".format(epoch+1, batch_index))
 		chin_char = tensor([index_encode(char) for char in chin_char])
@@ -410,12 +417,12 @@ def train_batch(model,optimizer, device, train_loader, epoch, l_interval, l_rate
 		loss = F.nll_loss(output, chin_char)
 		loss.backward()
 		optimizer.step()
-		if batch_index%l_interval==0:
+		if batch_index%args.l_interval==0:
 			print("\tTrain Epoch: {}\n\tBatch Index: {}\n\tData Count: {} \n\tLoss Value: {:3f}\n ".
 				format(epoch+1, batch_index, batch_index*len(image), loss.item()))
 	return 
 		
-def cv_test_batch(model, epoch, device, cv_test_loader, l_interval):
+def cv_test_batch(model, epoch, device, cv_test_loader, args):
 	model.eval()
 	test_loss,correct,batch_total = 0,0,0
 	with torch.no_grad():
@@ -427,19 +434,19 @@ def cv_test_batch(model, epoch, device, cv_test_loader, l_interval):
 			_, pred = torch.max(output, 1)
 			test_loss += F.nll_loss(output, chin_char, reduction='sum').item()
 			correct += pred.eq(chin_char.view_as(pred)).sum().item()
-			batch_total+= BATCH_SIZE
+			batch_total+= args.batch_size
 	print("Correct: {}".format(correct))
 	print("\tAverage Loss: {}\nAccuracy:{}\n".format(test_loss/len(cv_test_loader), float(correct)/batch_total))
 	return 100*(1.0-float(correct)/batch_total) # denotes the average error for a particular epoch
 
 def _Data_Loader(batch_type, args):
-	if(batch_type=="train"): chin_char_path = JOIN(os.getcwd(),'chin_char_trn_preproc')
-	elif(batch_type=="cv"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc')
-	elif(batch_type=="test"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc')
+	if(batch_type=="train"): chin_char_path = JOIN(os.getcwd(),'chin_char_trn_preproc2')
+	elif(batch_type=="cv"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc2')
+	elif(batch_type=="test"): chin_char_path = JOIN(os.getcwd(),'chin_char_tst_preproc2')
 	else: 
 		print("invalid batch_type")
 		return None
-	_dict,_labs = load_dict(chin_char_path, args.l_interval)
+	_dict,_labs = load_dict(chin_char_path, args)
 	with open("{}_dict_mini.txt".format(batch_type), "w", encoding="utf-8") as fdict: fdict.write(str(_dict))
 	with open("{}_labs_mini.txt".format(batch_type), "w", encoding="utf-8") as flabs: flabs.write(str(_labs))
 	_dataset = Chin_Char_Dataset(_dict,_labs)
@@ -478,9 +485,9 @@ def main_shell():
 		error_list = []
 		print("working model {}".format(ind_name[m_index]),end='\n\n')
 		for epoch in range(args.epochs):
-			train_batch(model, optimizer, device, train_loader, epoch, args. l_interval, args.l_rate)
-			if(args.cv_flag): incorrect = cv_test_batch(model, epoch, device, cv_loader, args.l_interval)
-			else: incorrect = cv_test_batch(model, epoch, device, test_loader, args.l_interval)
+			train_batch(model, optimizer, device, train_loader, epoch, args)
+			if(args.cv_flag): incorrect = cv_test_batch(model, epoch, device, cv_loader, args)
+			else: incorrect = cv_test_batch(model, epoch, device, test_loader, args)
 			error_list.append(incorrect)
 		try: os.mkdir("torch_cnn_data")
 		except: print("directory present - moving on...") 

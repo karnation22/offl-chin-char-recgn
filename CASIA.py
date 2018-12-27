@@ -17,6 +17,7 @@ from scipy.misc import toimage
 from tqdm import tqdm
 from statusbar import DLProgress
 
+## NOTE: The following code has some derivate work of the PyCasia python library 
 
 class CASIA:
     """

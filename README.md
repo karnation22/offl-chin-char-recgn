@@ -2,7 +2,7 @@
 My implementation of Offline Chinese Character Recognition using CASIA Dataset - please read details below.
 
 Prerequisites: 
---Python 3.7 or greater
+--Python 3.7 
 
 - Install the following dependencies: 
 

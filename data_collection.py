@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-assert("3." in sys.version)
+assert("3.7" in sys.version)
 from CASIA import CASIA
 from PIL import Image 
 from mini_lambs import JOIN

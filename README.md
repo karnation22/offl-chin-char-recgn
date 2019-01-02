@@ -1,5 +1,5 @@
 # offl_chin_char_recgn
-My implementation of Offline Chinese Character Recognition using CASIA Dataset - please read details below.
+Please read the details below.
 
 Prerequisites: 
 --Python 3.7 

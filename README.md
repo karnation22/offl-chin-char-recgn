@@ -1,5 +1,5 @@
-# offline_chin_char_recgn
-Please read the details below;
+# offline_chinese_characater_recognition
+Please read the details below:
 
 Prerequisite programming language: 
 --Python 3.7.

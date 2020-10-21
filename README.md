@@ -5,22 +5,22 @@ Prerequisite programming language:
 --Python 3.7.
 
 Install the following dependencies: 
- - 1. CASIA 
- - 2. PIL 
- - 3. logging
- - 4. resizeimage
- - 5. numpy
- - 6. skimage
- - 7. argparse
- - 8. torch and torchvision (pytorch)
- - 9. collections
- - 10. statistics
- - 11. random
- - 12. matplotlib
- - 13. svm
- - 14. sklearn
- - 15. svmutil
- - 16. pickle
+ - 1 - CASIA 
+ - 2 - PIL 
+ - 3 - logging
+ - 4 - resizeimage
+ - 5 - numpy
+ - 6 - skimage
+ - 7 - argparse
+ - 8 - torch and torchvision (pytorch)
+ - 9 - collections
+ - 10 - statistics
+ - 11 - random
+ - 12 - matplotlib
+ - 13 - svm
+ - 14 - sklearn
+ - 15 - svmutil
+ - 16 - pickle
       
 - Iterate in the following order (source or terminal): (python ___)
   - 1. Run data_collection.py:

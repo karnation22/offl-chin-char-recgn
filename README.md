@@ -1,4 +1,4 @@
-# offline_chinese_characater_recognition
+# offline_chinese_character_recognition
 Please read the details below:
 
 Prerequisite programming language: 

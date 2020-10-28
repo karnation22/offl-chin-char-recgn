@@ -2,7 +2,7 @@
 Please read the details below:
 
 Prerequisite programming language: 
---Python 3.7.
+ -- Python 3.7.
 
 Install the following dependencies: 
  - 1 - CASIA 
@@ -23,15 +23,15 @@ Install the following dependencies:
  - 16 - pickle
       
 - Iterate in the following order (source or terminal): (python ___)
-  - 1. Run data_collection.py:
-      --> Yield "chin_char_trn", "chin_char_cv", "chin_char_tst"      
-  - 2. Run data_preprocessing.py:
-      --> Yield "chin_char_trn_preproc", "chin_char_cv_preproc", "chin_char_tst_preproc"
-  - 3. Run data_training_cnn.py (for CNN models). Type '-h' to see terminal arguments. Other hyperparameters are capitalized near the top of the code. 
-       --> Yield 6 CNN plots in  the ".png" files, and 6 CNN models in the ".dat" files all in "torch_cnn_data".
+  - 1. Run data_collection.py: Yield "chin_char_trn", "chin_char_cv", "chin_char_tst"      
+  - 2. Run data_preprocessing.py: Yield "chin_char_trn_preproc", "chin_char_cv_preproc", "chin_char_tst_preproc"
+  - 3. Run data_training_cnn.py (for CNN models). 
+        Type '-h' to see terminal arguments. 
+        Other hyperparameters are capitalized near the top of the code. 
+        Yield 6 CNN plots in  the ".png" files, and 6 CNN models in the ".dat" files all in "torch_cnn_data".
   - 4. Run data_training_svm.py (for SVM models). 
-            In the terminal, arguments are NUM_CLASSES(default=200), NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
-       --> Yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
+        In the terminal, arguments are NUM_CLASSES(default=200), NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
+        Yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
        
 DISCLAIMER: The following implementation may contain errors or may not work in your particular environment. 
             If so, feel free to post issues on the issue thread.

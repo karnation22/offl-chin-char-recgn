@@ -41,6 +41,4 @@ Install the following dependencies:
         -- Arguments are NUM_CLASSES(default=200), NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
         
        
-DISCLAIMER: The following implementation may contain errors or may not work in your particular environment. 
-
-            If so, feel free to post issues on the issue thread.
+DISCLAIMER: The following implementation may contain errors or may not work in your particular environment; if so, feel free to post issues on the issue thread.

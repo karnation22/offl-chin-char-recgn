@@ -38,4 +38,5 @@ Install the following dependencies:
              NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
         
        
-DISCLAIMER: The following implementation may contain errors or may not work in your particular environment; if so, feel free to post issue(s) on the issue thread.
+DISCLAIMER: The following implementation may contain errors or may not work in your particular environment; 
+            if so, feel free to post issue(s) on the issue thread.

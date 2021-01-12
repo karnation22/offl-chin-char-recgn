@@ -29,9 +29,11 @@ Install the following dependencies:
   -- 2. Run data_preprocessing.py; yield "chin_char_trn_preproc", "chin_char_cv_preproc", "chin_char_tst_preproc"
   
   -- 3. Run data_training_cnn.py (for CNN models); yield 6 CNN plots in  the ".png" files, and 6 CNN models in the ".dat" files all in "torch_cnn_data".
+        
         ---- Type '-h' to see terminal arguments. 
         
   -- 4. Run data_training_svm.py (for SVM models); yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
+        
         ---- Arguments are NUM_CLASSES(default=200), NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
         
        

@@ -34,7 +34,8 @@ Install the following dependencies:
         
   -- 4. Run data_training_svm.py (for SVM models); yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
         
-        ---- Arguments are NUM_CLASSES(default=200), NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
+        ---- Arguments are NUM_CLASSES(default=200), 
+             NUM_PTS_PER_CLASS_1(default=100), and NUM_PTS_PER_CLASS_2(default=20).
         
        
 DISCLAIMER: The following implementation may contain errors or may not work in your particular environment; if so, feel free to post issue(s) on the issue thread.

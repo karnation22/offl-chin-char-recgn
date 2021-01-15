@@ -40,11 +40,11 @@ Install the following dependencies:
 
  -- 17: pickle
 
- -- 18: Gensim
+ -- 18: gensim
 
- -- 19: Graphlab
+ -- 19: graphlab
 
- -- 20: NLTK
+ -- 20: nltk
       
 - Iterate in the following order (source or terminal): (python ___)
 

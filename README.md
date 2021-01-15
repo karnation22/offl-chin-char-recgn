@@ -6,37 +6,45 @@ Prerequisite programming language:
 
 Install the following dependencies: 
 
- -- 1 - CASIA 
+ -- 1: CASIA 
 
- -- 2 - PIL 
+ -- 2: PIL 
 
- -- 3 - logging
+ -- 3: logging
 
- -- 4 - resizeimage
+ -- 4: resizeimage
 
- -- 5 - numpy
+ -- 5: numpy
 
- -- 6 - skimage
+ -- 6: skimage
 
- -- 7 - argparse
+ -- 7: argparse
 
- -- 8 - torch and torchvision (pytorch)
+ -- 8: torch
 
- -- 9 - collections
+ -- 9: torchvision (pytorch)
 
- -- 10 - statistics
+ -- 10: collections
 
- -- 11 - random
+ -- 11: statistics
 
- -- 12 - matplotlib
+ -- 12: random
 
- -- 13 - svm
+ -- 13: matplotlib
 
- -- 14 - sklearn
+ -- 14: svm
 
- -- 15 - svmutil
+ -- 15: sklearn
 
- -- 16 - pickle
+ -- 16: svmutil
+
+ -- 17: pickle
+
+ -- 18: Gensim
+
+ -- 19: Graphlab
+
+ -- 20: NLTK
       
 - Iterate in the following order (source or terminal): (python ___)
 

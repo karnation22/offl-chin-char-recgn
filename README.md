@@ -52,7 +52,7 @@ Install the following dependencies:
   
   --- 2. Run data_preprocessing.py; yield "chin_char_trn_preproc", "chin_char_cv_preproc", "chin_char_tst_preproc"
   
-  --- 3. Run data_training_cnn.py (for CNN models); yield 6 CNN plots in ".png" files and 6 CNN models in ".dat" files.
+  --- 3. Run data_training_cnn.py (for CNN ); yield 6 CNN plots in ".png" files and 6 CNN models in ".dat" files.
         
         ---- Type '-h' to see terminal arguments. 
         

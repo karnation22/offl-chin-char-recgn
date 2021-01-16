@@ -54,7 +54,7 @@ Install the following dependencies:
   
   --- 3. Run data_training_cnn.py (for CNN ); yield 6 CNN plots in ".png" files and 6 CNN models in ".dat" files.
         
-        ---- Type '-h' to see terminal arguments. 
+        ---- Type '--help' to see terminal arguments. 
         
   --- 4. Run data_training_svm.py (for SVM models); yield two SVM models (LIBSVM in .model and Sklearn in .pkl)
         

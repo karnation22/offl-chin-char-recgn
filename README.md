@@ -22,7 +22,7 @@ Install the following dependencies:
 
  -- 8: torch
 
- -- 9: torchvision (pytorch)
+ -- 9: torchvision
 
  -- 10: collections
 

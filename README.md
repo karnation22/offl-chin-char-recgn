@@ -46,7 +46,7 @@ Install the following dependencies:
 
  -- 20: nltk
       
-- Iterate in the following order (source or terminal): (python ___)
+Iterate in the following order (source or terminal): (python ___)
 
   --- 1. Run data_collection.py; yield "chin_char_trn", "chin_char_cv", "chin_char_tst"      
   
